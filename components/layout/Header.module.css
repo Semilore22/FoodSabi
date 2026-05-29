@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--color-background);
+  min-height: 48px;
+}
+
+.menuBtn {
+  display: flex;
+}
+
+.brand {
+  display: none;
+  font-size: var(--typography-title-large-font-size);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+@media (max-width: 767px) {
+  .header {
+    justify-content: center;
+  }
+
+  .menuBtn {
+    position: absolute;
+    left: 12px;
+  }
+
+  .brand {
+    display: flex;
+  }
+}
+
+@media (min-width: 768px) {
+  .menuBtn {
+    display: none;
+  }
+}

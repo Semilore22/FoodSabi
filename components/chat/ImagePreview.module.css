@@ -1,0 +1,73 @@
+.container {
+  padding: 8px 16px 0;
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  background: var(--color-surface-container);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.thumbnail {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.filename {
+  font-size: var(--typography-body-small-font-size);
+  color: var(--color-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.size {
+  font-size: var(--typography-label-small-font-size);
+  color: var(--color-on-surface-variant);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.overlayText {
+  color: white;
+  font-size: var(--typography-body-small-font-size);
+  font-weight: 500;
+}
+
+.errorCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-error-container);
+  border-left: 3px solid var(--color-error);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.errorText {
+  flex: 1;
+  font-size: var(--typography-body-small-font-size);
+  color: var(--color-on-error-container);
+}

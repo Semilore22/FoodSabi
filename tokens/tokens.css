@@ -1,0 +1,326 @@
+/* Automatically generated from design tokens */
+
+:root {
+  /* Light Theme Color Roles */
+  --color-primary: hsl(140, 56%, 35%);
+  --color-on-primary: hsl(0, 0%, 100%);
+  --color-primary-container: hsl(134, 62%, 65%);
+  --color-on-primary-container: hsl(146, 100%, 16%);
+  --color-secondary: hsl(149, 40%, 29%);
+  --color-on-secondary: hsl(0, 0%, 100%);
+  --color-secondary-container: hsl(142, 42%, 71%);
+  --color-on-secondary-container: hsl(152, 67%, 19%);
+  --color-tertiary: hsl(174, 100%, 21%);
+  --color-on-tertiary: hsl(0, 0%, 100%);
+  --color-tertiary-container: hsl(172, 61%, 62%);
+  --color-on-tertiary-container: hsl(174, 100%, 16%);
+
+  --color-error: {
+    color.palette.error.40
+  }
+
+  ;
+
+  --color-on-error: {
+    color.palette.error.100
+  }
+
+  ;
+
+  --color-error-container: {
+    color.palette.error.80
+  }
+
+  ;
+
+  --color-on-error-container: {
+    color.palette.error.30
+  }
+
+  ;
+  --color-background: hsl(60, 14%, 97%);
+  --color-on-background: hsl(150, 4%, 11%);
+  --color-surface: hsl(60, 25%, 98%);
+  --color-on-surface: hsl(150, 4%, 11%);
+  --color-surface-variant: hsl(90, 3%, 89%);
+  --color-on-surface-variant: hsl(150, 1%, 27%);
+  --color-outline: hsl(120, 1%, 85%);
+  --color-outline-variant: hsl(90, 2%, 78%);
+  --color-inverse-surface: hsl(150, 2%, 19%);
+  --color-inverse-on-surface: hsl(60, 7%, 94%);
+  --color-inverse-primary: hsl(134, 62%, 65%);
+  --color-surface-dim: hsl(60, 3%, 85%);
+  --color-surface-bright: hsl(60, 14%, 97%);
+  --color-surface-container-lowest: hsl(0, 0%, 100%);
+  --color-surface-container-low: hsl(60, 8%, 95%);
+  --color-surface-container: hsl(60, 6%, 93%);
+  --color-surface-container-high: hsl(60, 4%, 91%);
+  --color-surface-container-highest: hsl(60, 8%, 97%);
+
+  /* Typography */
+  --typography-display-large-font-size: 64px;
+  --typography-display-large-text-decoration: none;
+  --typography-display-large-font-family: Poppins;
+  --typography-display-large-font-weight: 400;
+  --typography-display-large-font-style: normal;
+  --typography-display-large-font-stretch: normal;
+  --typography-display-large-letter-spacing: -4px;
+  --typography-display-large-line-height: 76.8px;
+  --typography-display-large-paragraph-indent: 0;
+  --typography-display-large-paragraph-spacing: 0;
+  --typography-display-large-text-case: none;
+  --typography-display-medium-font-size: 52px;
+  --typography-display-medium-text-decoration: none;
+  --typography-display-medium-font-family: Poppins;
+  --typography-display-medium-font-weight: 400;
+  --typography-display-medium-font-style: normal;
+  --typography-display-medium-font-stretch: normal;
+  --typography-display-medium-letter-spacing: -3px;
+  --typography-display-medium-line-height: 62.4px;
+  --typography-display-medium-paragraph-indent: 0;
+  --typography-display-medium-paragraph-spacing: 0;
+  --typography-display-medium-text-case: none;
+  --typography-display-small-font-size: 36px;
+  --typography-display-small-text-decoration: none;
+  --typography-display-small-font-family: Poppins;
+  --typography-display-small-font-weight: 400;
+  --typography-display-small-font-style: normal;
+  --typography-display-small-font-stretch: normal;
+  --typography-display-small-letter-spacing: -2px;
+  --typography-display-small-line-height: 54px;
+  --typography-display-small-paragraph-indent: 0;
+  --typography-display-small-paragraph-spacing: 0;
+  --typography-display-small-text-case: none;
+  --typography-headline-large-font-size: 36px;
+  --typography-headline-large-text-decoration: none;
+  --typography-headline-large-font-family: Poppins;
+  --typography-headline-large-font-weight: 400;
+  --typography-headline-large-font-style: normal;
+  --typography-headline-large-font-stretch: normal;
+  --typography-headline-large-letter-spacing: -1.5px;
+  --typography-headline-large-line-height: 54px;
+  --typography-headline-large-paragraph-indent: 0;
+  --typography-headline-large-paragraph-spacing: 0;
+  --typography-headline-large-text-case: none;
+  --typography-headline-medium-font-size: 28px;
+  --typography-headline-medium-text-decoration: none;
+  --typography-headline-medium-font-family: Poppins;
+  --typography-headline-medium-font-weight: 400;
+  --typography-headline-medium-font-style: normal;
+  --typography-headline-medium-font-stretch: normal;
+  --typography-headline-medium-letter-spacing: -1px;
+  --typography-headline-medium-line-height: 42px;
+  --typography-headline-medium-paragraph-indent: 0;
+  --typography-headline-medium-paragraph-spacing: 0;
+  --typography-headline-medium-text-case: none;
+  --typography-headline-small-font-size: 24px;
+  --typography-headline-small-text-decoration: none;
+  --typography-headline-small-font-family: Poppins;
+  --typography-headline-small-font-weight: 400;
+  --typography-headline-small-font-style: normal;
+  --typography-headline-small-font-stretch: normal;
+  --typography-headline-small-letter-spacing: -0.8px;
+  --typography-headline-small-line-height: 36px;
+  --typography-headline-small-paragraph-indent: 0;
+  --typography-headline-small-paragraph-spacing: 0;
+  --typography-headline-small-text-case: none;
+  --typography-title-large-font-size: 24px;
+  --typography-title-large-text-decoration: none;
+  --typography-title-large-font-family: Poppins;
+  --typography-title-large-font-weight: 400;
+  --typography-title-large-font-style: normal;
+  --typography-title-large-font-stretch: normal;
+  --typography-title-large-letter-spacing: -0.5px;
+  --typography-title-large-line-height: 36px;
+  --typography-title-large-paragraph-indent: 0;
+  --typography-title-large-paragraph-spacing: 0;
+  --typography-title-large-text-case: none;
+  --typography-title-medium-font-size: 18px;
+  --typography-title-medium-text-decoration: none;
+  --typography-title-medium-font-family: Poppins;
+  --typography-title-medium-font-weight: 400;
+  --typography-title-medium-font-style: normal;
+  --typography-title-medium-font-stretch: normal;
+  --typography-title-medium-letter-spacing: -0.3px;
+  --typography-title-medium-line-height: 27px;
+  --typography-title-medium-paragraph-indent: 0;
+  --typography-title-medium-paragraph-spacing: 0;
+  --typography-title-medium-text-case: none;
+  --typography-title-small-font-size: 16px;
+  --typography-title-small-text-decoration: none;
+  --typography-title-small-font-family: Poppins;
+  --typography-title-small-font-weight: 400;
+  --typography-title-small-font-style: normal;
+  --typography-title-small-font-stretch: normal;
+  --typography-title-small-letter-spacing: -0.1px;
+  --typography-title-small-line-height: 21px;
+  --typography-title-small-paragraph-indent: 0;
+  --typography-title-small-paragraph-spacing: 0;
+  --typography-title-small-text-case: none;
+  --typography-body-large-font-size: 18px;
+  --typography-body-large-text-decoration: none;
+  --typography-body-large-font-family: Poppins;
+  --typography-body-large-font-weight: 400;
+  --typography-body-large-font-style: normal;
+  --typography-body-large-font-stretch: normal;
+  --typography-body-large-letter-spacing: -0.5px;
+  --typography-body-large-line-height: 27px;
+  --typography-body-large-paragraph-indent: 0;
+  --typography-body-large-paragraph-spacing: 0;
+  --typography-body-large-text-case: none;
+  --typography-body-medium-font-size: 14px;
+  --typography-body-medium-text-decoration: none;
+  --typography-body-medium-font-family: Poppins;
+  --typography-body-medium-font-weight: 400;
+  --typography-body-medium-font-style: normal;
+  --typography-body-medium-font-stretch: normal;
+  --typography-body-medium-letter-spacing: -0.3px;
+  --typography-body-medium-line-height: 21px;
+  --typography-body-medium-paragraph-indent: 0;
+  --typography-body-medium-paragraph-spacing: 0;
+  --typography-body-medium-text-case: none;
+  --typography-body-small-font-size: 12px;
+  --typography-body-small-text-decoration: none;
+  --typography-body-small-font-family: Poppins;
+  --typography-body-small-font-weight: 400;
+  --typography-body-small-font-style: normal;
+  --typography-body-small-font-stretch: normal;
+  --typography-body-small-letter-spacing: -0.1px;
+  --typography-body-small-line-height: 18px;
+  --typography-body-small-paragraph-indent: 0;
+  --typography-body-small-paragraph-spacing: 0;
+  --typography-body-small-text-case: none;
+  --typography-label-large-font-size: 14px;
+  --typography-label-large-text-decoration: none;
+  --typography-label-large-font-family: Poppins;
+  --typography-label-large-font-weight: 400;
+  --typography-label-large-font-style: normal;
+  --typography-label-large-font-stretch: normal;
+  --typography-label-large-letter-spacing: -0.5px;
+  --typography-label-large-line-height: 21px;
+  --typography-label-large-paragraph-indent: 0;
+  --typography-label-large-paragraph-spacing: 0;
+  --typography-label-large-text-case: none;
+  --typography-label-medium-font-size: 12px;
+  --typography-label-medium-text-decoration: none;
+  --typography-label-medium-font-family: Poppins;
+  --typography-label-medium-font-weight: 400;
+  --typography-label-medium-font-style: normal;
+  --typography-label-medium-font-stretch: normal;
+  --typography-label-medium-letter-spacing: -0.3px;
+  --typography-label-medium-line-height: 18px;
+  --typography-label-medium-paragraph-indent: 0;
+  --typography-label-medium-paragraph-spacing: 0;
+  --typography-label-medium-text-case: none;
+  --typography-label-small-font-size: 11px;
+  --typography-label-small-text-decoration: none;
+  --typography-label-small-font-family: Poppins;
+  --typography-label-small-font-weight: 400;
+  --typography-label-small-font-style: normal;
+  --typography-label-small-font-stretch: normal;
+  --typography-label-small-letter-spacing: -0.1px;
+  --typography-label-small-line-height: 16.5px;
+  --typography-label-small-paragraph-indent: 0;
+  --typography-label-small-paragraph-spacing: 0;
+  --typography-label-small-text-case: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Theme Color Roles */
+    --color-primary: hsl(140, 56%, 55%);
+    --color-on-primary: hsl(143, 100%, 11%);
+    --color-primary-container: hsl(146, 100%, 16%);
+    --color-on-primary-container: hsl(133, 92%, 76%);
+    --color-secondary: hsl(142, 42%, 71%);
+    --color-on-secondary: hsl(155, 100%, 11%);
+    --color-secondary-container: hsl(152, 67%, 19%);
+    --color-on-secondary-container: hsl(142, 70%, 82%);
+    --color-tertiary: hsl(172, 61%, 62%);
+    --color-on-tertiary: hsl(173, 100%, 11%);
+    --color-tertiary-container: hsl(174, 100%, 16%);
+    --color-on-tertiary-container: hsl(171, 87%, 74%);
+
+    --color-error: {
+      color.palette.error.80
+    }
+
+    ;
+
+    --color-on-error: {
+      color.palette.error.20
+    }
+
+    ;
+
+    --color-error-container: {
+      color.palette.error.30
+    }
+
+    ;
+
+    --color-on-error-container: {
+      color.palette.error.90
+    }
+
+    ;
+
+    --color-background: {
+      color.palette.neutral.6
+    }
+
+    ;
+    --color-on-background: hsl(80, 5%, 88%);
+
+    --color-surface: {
+      color.palette.neutral.6
+    }
+
+    ;
+    --color-on-surface: hsl(80, 5%, 88%);
+    --color-surface-variant: hsl(150, 1%, 27%);
+    --color-on-surface-variant: hsl(90, 2%, 78%);
+    --color-outline: hsl(150, 1%, 56%);
+    --color-outline-variant: hsl(150, 1%, 27%);
+    --color-inverse-surface: hsl(80, 5%, 88%);
+    --color-inverse-on-surface: hsl(150, 2%, 19%);
+    --color-inverse-primary: hsl(147, 100%, 21%);
+
+    --color-surface-dim: {
+      color.palette.neutral.6
+    }
+
+    ;
+
+    --color-surface-bright: {
+      color.palette.neutral.24
+    }
+
+    ;
+
+    --color-surface-container-lowest: {
+      color.palette.neutral.4
+    }
+
+    ;
+    --color-surface-container-low: hsl(150, 4%, 11%);
+
+    --color-surface-container: {
+      color.palette.neutral.12
+    }
+
+    ;
+
+    --color-surface-container-high: {
+      color.palette.neutral.17
+    }
+
+    ;
+
+    --color-surface-container-highest: {
+      color.palette.neutral.22
+    }
+
+    ;
+  }
+}

@@ -1,0 +1,88 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--color-surface-container);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: var(--typography-title-medium-font-size);
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin: 0;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.subtext {
+  font-size: var(--typography-body-medium-font-size);
+  color: var(--color-on-surface-variant);
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancelBtn {
+  padding: 10px 24px;
+  min-height: 44px;
+  border-radius: 1000px;
+  border: 1px solid var(--color-outline);
+  background: transparent;
+  color: var(--color-on-surface);
+  font-size: var(--typography-body-medium-font-size);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cancelBtn:hover {
+  background: var(--color-surface-container-high);
+}
+
+.deleteBtn {
+  padding: 10px 24px;
+  min-height: 44px;
+  border-radius: 1000px;
+  border: none;
+  background: hsl(0, 60%, 27%);
+  color: #fff;
+  font-size: var(--typography-body-medium-font-size);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.deleteBtn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: var(--typography-title-small-font-size);
+    white-space: normal;
+  }
+  .subtext {
+    font-size: var(--typography-body-small-font-size);
+  }
+}

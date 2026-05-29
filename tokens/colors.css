@@ -1,0 +1,77 @@
+/* Design token — DO NOT MODIFY. Source of truth for all color values. */
+
+:root {
+  --color-primary: hsl(140, 56%, 40%);
+  --color-on-primary: hsl(0, 0%, 100%);
+  --color-primary-container: hsl(134, 62%, 65%);
+  --color-on-primary-container: hsl(146, 100%, 16%);
+  --color-secondary: hsl(149, 40%, 29%);
+  --color-on-secondary: hsl(0, 0%, 100%);
+  --color-secondary-container: hsl(142, 42%, 71%);
+  --color-on-secondary-container: hsl(152, 67%, 19%);
+  --color-tertiary: hsl(174, 100%, 21%);
+  --color-on-tertiary: hsl(0, 0%, 100%);
+  --color-tertiary-container: hsl(172, 61%, 62%);
+  --color-on-tertiary-container: hsl(174, 100%, 16%);
+  --color-error: hsl(0, 59%, 41%);
+  --color-on-error: hsl(0, 0%, 100%);
+  --color-error-container: hsl(0, 80%, 90%);
+  --color-on-error-container: hsl(0, 59%, 20%);
+  --color-background: hsl(60, 14%, 97%);
+  --color-on-background: hsl(150, 4%, 11%);
+  --color-surface: hsl(60, 25%, 98%);
+  --color-on-surface: hsl(150, 4%, 11%);
+  --color-surface-variant: hsl(90, 3%, 89%);
+  --color-on-surface-variant: hsl(150, 1%, 27%);
+  --color-outline: hsl(120, 1%, 85%);
+  --color-outline-variant: hsl(90, 2%, 78%);
+  --color-inverse-surface: hsl(150, 2%, 19%);
+  --color-inverse-on-surface: hsl(60, 7%, 94%);
+  --color-inverse-primary: hsl(134, 62%, 65%);
+  --color-surface-dim: hsl(60, 3%, 85%);
+  --color-surface-bright: hsl(60, 14%, 97%);
+  --color-surface-container-lowest: hsl(0, 0%, 100%);
+  --color-surface-container-low: hsl(60, 8%, 95%);
+  --color-surface-container: hsl(60, 6%, 93%);
+  --color-surface-container-high: hsl(60, 4%, 91%);
+  --color-surface-container-highest: hsl(60, 8%, 97%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: hsl(140, 56%, 40%);
+    --color-on-primary: hsl(143, 100%, 11%);
+    --color-primary-container: hsl(146, 100%, 16%);
+    --color-on-primary-container: hsl(133, 92%, 76%);
+    --color-secondary: hsl(142, 42%, 71%);
+    --color-on-secondary: hsl(155, 100%, 11%);
+    --color-secondary-container: hsl(152, 67%, 19%);
+    --color-on-secondary-container: hsl(142, 70%, 82%);
+    --color-tertiary: hsl(172, 61%, 62%);
+    --color-on-tertiary: hsl(173, 100%, 11%);
+    --color-tertiary-container: hsl(174, 100%, 16%);
+    --color-on-tertiary-container: hsl(171, 87%, 74%);
+    --color-error: hsl(0, 80%, 90%);
+    --color-on-error: hsl(0, 59%, 20%);
+    --color-error-container: hsl(0, 59%, 20%);
+    --color-on-error-container: hsl(0, 80%, 90%);
+    --color-background: hsl(150, 4%, 11%);
+    --color-on-background: hsl(80, 5%, 88%);
+    --color-surface: hsl(150, 4%, 11%);
+    --color-on-surface: hsl(80, 5%, 88%);
+    --color-surface-variant: hsl(150, 1%, 27%);
+    --color-on-surface-variant: hsl(90, 2%, 78%);
+    --color-outline: hsl(150, 1%, 56%);
+    --color-outline-variant: hsl(150, 1%, 27%);
+    --color-inverse-surface: hsl(80, 5%, 88%);
+    --color-inverse-on-surface: hsl(150, 2%, 19%);
+    --color-inverse-primary: hsl(147, 100%, 21%);
+    --color-surface-dim: hsl(150, 4%, 11%);
+    --color-surface-bright: hsl(150, 2%, 24%);
+    --color-surface-container-lowest: hsl(0, 0%, 4%);
+    --color-surface-container-low: hsl(150, 4%, 11%);
+    --color-surface-container: hsl(150, 2%, 12%);
+    --color-surface-container-high: hsl(150, 1%, 17%);
+    --color-surface-container-highest: hsl(150, 1%, 22%);
+  }
+}

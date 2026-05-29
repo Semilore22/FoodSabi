@@ -1,0 +1,173 @@
+"use client"
+
+import { useState, useRef, useEffect } from "react"
+import styles from "./ChatInput.module.css"
+import { IconButton } from "@/components/ui/IconButton"
+import { UploadButton } from "./UploadButton"
+import { SUPPORTED_MIME_TYPES } from "@/lib/constants"
+
+interface InputPayload {
+  inputType: "text" | "paste" | "image"
+  content: string
+  imageFile?: File
+}
+
+interface ChatInputProps {
+  onSend: (input: InputPayload) => void
+  isLoading: boolean
+  isOcrProcessing: boolean
+  selectedFile: File | null
+  onFileSelect: (file: File) => void
+  onFileRemove: () => void
+}
+
+export function ChatInput({
+  onSend,
+  isLoading,
+  isOcrProcessing,
+  selectedFile,
+  onFileSelect,
+  onFileRemove,
+}: ChatInputProps) {
+  const [text, setText] = useState("")
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreviewUrl(null)
+      return
+    }
+    if (!SUPPORTED_MIME_TYPES.includes(selectedFile.type)) {
+      setPreviewUrl(null)
+      return
+    }
+    const url = URL.createObjectURL(selectedFile)
+    setPreviewUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [selectedFile])
+
+  useEffect(() => {
+    if (!inputRef.current) return
+    if (!text) {
+      inputRef.current.style.height = "auto"
+    }
+  }, [text])
+
+  const handleSend = () => {
+    const trimmed = text.trim()
+    if (selectedFile) {
+      setText("")
+      onSend({
+        inputType: "image",
+        content: trimmed,
+        imageFile: selectedFile,
+      })
+      return
+    }
+
+    if (!trimmed || isLoading) return
+
+    setText("")
+    const isPaste = trimmed.length > 200 || trimmed.includes("\n")
+    onSend({
+      inputType: isPaste ? "paste" : "text",
+      content: trimmed,
+    })
+  }
+
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const el = e.currentTarget
+    el.style.height = "auto"
+    el.style.height = `${el.scrollHeight}px`
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  const canSend = (text.trim().length > 0 || selectedFile !== null) && !isLoading && !isOcrProcessing
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.inputBar}>
+        <div className={`${styles.inputWrapper} ${selectedFile ? styles.inputWrapperWithImage : ""}`}>
+          {selectedFile ? (
+            <>
+              <div className={styles.imagePreviewSection}>
+                {previewUrl && (
+                  <div className={styles.imagePreview}>
+                    <img src={previewUrl} alt="Selected label" className={styles.thumbnail} />
+                    <button
+                      type="button"
+                      className={styles.removeBtn}
+                      onClick={onFileRemove}
+                      aria-label="Remove image"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className={styles.textRow}>
+                <textarea
+                  ref={inputRef}
+                  className={styles.textField}
+                  placeholder="Add a note about this image..."
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onInput={handleInput}
+                  onKeyDown={handleKeyDown}
+                  rows={1}
+                  disabled={isLoading || isOcrProcessing}
+                />
+                {(text.trim().length > 0 || selectedFile !== null) && (
+                  <IconButton
+                    icon="send"
+                    onClick={handleSend}
+                    ariaLabel="Send message"
+                    disabled={!canSend}
+                    isLoading={isLoading}
+                    variant="primary"
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.leftActions}>
+                <UploadButton onFileSelect={onFileSelect} disabled={isLoading || isOcrProcessing} icon="plus" />
+              </div>
+              <textarea
+                ref={inputRef}
+                className={styles.textInput}
+                placeholder="Type an ingredient or upload a label..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onInput={handleInput}
+                onKeyDown={handleKeyDown}
+                rows={1}
+                disabled={isLoading || isOcrProcessing}
+              />
+              {(text.trim().length > 0 || selectedFile !== null) && (
+                <div className={styles.actions}>
+                  <IconButton
+                    icon="send"
+                    onClick={handleSend}
+                    ariaLabel="Send message"
+                    disabled={!canSend}
+                    isLoading={isLoading}
+                    variant="primary"
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

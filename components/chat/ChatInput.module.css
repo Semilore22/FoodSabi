@@ -1,0 +1,164 @@
+.container {
+  width: 100%;
+  background: transparent;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.inputBar {
+  display: flex;
+  padding: 8px 12px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.inputWrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 48px;
+  border: 1px solid var(--color-outline-soft);
+  background: var(--color-surface-container);
+}
+
+.textInput {
+  width: 100%;
+  resize: none;
+  min-height: 22px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 20px 48px 16px 48px;
+  border: none;
+  background: transparent;
+  color: var(--color-on-surface);
+  font-size: var(--typography-body-medium-font-size);
+  line-height: 22px;
+  outline: none;
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+}
+
+.textInput::placeholder {
+  color: var(--color-on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--color-primary);
+}
+
+.textInput:disabled {
+  opacity: 0.5;
+}
+
+.inputWrapperWithImage {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-container);
+  border: 1px solid var(--color-outline-soft);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.imagePreviewSection {
+  padding: 10px 10px 0;
+}
+
+.imagePreview {
+  display: inline-flex;
+  position: relative;
+}
+
+.thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--color-outline-soft);
+}
+
+.removeBtn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-on-surface-variant);
+  color: black;
+  font-size: 11px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-surface-container);
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.removeBtn:hover {
+  opacity: 0.85;
+}
+
+.textRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.textField {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  min-height: 24px;
+  max-height: 120px;
+  overflow-y: auto;
+  color: var(--color-on-surface);
+  font-size: var(--typography-body-medium-font-size);
+  line-height: 22px;
+  outline: none;
+  font-family: var(--font-family-base);
+}
+
+.textField::placeholder {
+  color: var(--color-on-surface-variant);
+}
+
+.textField:disabled {
+  opacity: 0.5;
+}
+
+.actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.leftActions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 6px;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 767px) {
+  .inputWrapper {
+    display: flex;
+    align-items: center;
+  }
+  .textInput {
+    padding: 14px 48px;
+  }
+  .leftActions {
+    padding-bottom: 2px;
+  }
+}

@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.brandMark {
+  font-size: var(--typography-headline-medium-font-size);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.message {
+  font-size: var(--typography-body-medium-font-size);
+  color: var(--color-on-surface-variant);
+  line-height: 1.6;
+  max-width: 440px;
+}
+
+@media (max-width: 480px) {
+  .message {
+    max-width: 280px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

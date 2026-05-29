@@ -1,0 +1,14 @@
+export const MAX_IMAGE_SIZE_KB = 500
+export const SUPPORTED_IMAGE_FORMATS = ["jpg", "jpeg", "png", "webp"]
+export const SUPPORTED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"]
+export const MAX_HISTORY_LENGTH = 10
+export const DEEPSEEK_MODEL = "deepseek-chat"
+export const AI_IDENTITY_NAME = "FoodSabi"
+export const RETRY_DELAY_MS = 1000
+export const MAX_RETRIES = 2
+export const OCR_MIN_LENGTH = 5
+export const OCR_MAX_LENGTH = 10000
+export const RATE_LIMIT_TEXT_REQUESTS = 30
+export const RATE_LIMIT_IMAGE_REQUESTS = 10
+export const RATE_LIMIT_WINDOW_MS = 60000
+export const SESSION_EXPIRY_DAYS = 7

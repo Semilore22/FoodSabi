@@ -1,0 +1,95 @@
+/* Design token — DO NOT MODIFY. Source of truth for all typography values. */
+
+:root {
+  --font-family-base: "Poppins", sans-serif;
+
+  --typography-display-large-font-size: 64px;
+  --typography-display-large-font-family: Poppins;
+  --typography-display-large-font-weight: 400;
+  --typography-display-large-line-height: 76.8px;
+  --typography-display-large-letter-spacing: -4px;
+
+  --typography-display-medium-font-size: 52px;
+  --typography-display-medium-font-family: Poppins;
+  --typography-display-medium-font-weight: 400;
+  --typography-display-medium-line-height: 62.4px;
+  --typography-display-medium-letter-spacing: -3px;
+
+  --typography-display-small-font-size: 36px;
+  --typography-display-small-font-family: Poppins;
+  --typography-display-small-font-weight: 400;
+  --typography-display-small-line-height: 54px;
+  --typography-display-small-letter-spacing: -2px;
+
+  --typography-headline-large-font-size: 36px;
+  --typography-headline-large-font-family: Poppins;
+  --typography-headline-large-font-weight: 400;
+  --typography-headline-large-line-height: 54px;
+  --typography-headline-large-letter-spacing: -1.5px;
+
+  --typography-headline-medium-font-size: 28px;
+  --typography-headline-medium-font-family: Poppins;
+  --typography-headline-medium-font-weight: 400;
+  --typography-headline-medium-line-height: 42px;
+  --typography-headline-medium-letter-spacing: -1px;
+
+  --typography-headline-small-font-size: 24px;
+  --typography-headline-small-font-family: Poppins;
+  --typography-headline-small-font-weight: 400;
+  --typography-headline-small-line-height: 36px;
+  --typography-headline-small-letter-spacing: -0.8px;
+
+  --typography-title-large-font-size: 24px;
+  --typography-title-large-font-family: Poppins;
+  --typography-title-large-font-weight: 400;
+  --typography-title-large-line-height: 36px;
+  --typography-title-large-letter-spacing: -0.5px;
+
+  --typography-title-medium-font-size: 18px;
+  --typography-title-medium-font-family: Poppins;
+  --typography-title-medium-font-weight: 400;
+  --typography-title-medium-line-height: 27px;
+  --typography-title-medium-letter-spacing: -0.3px;
+
+  --typography-title-small-font-size: 16px;
+  --typography-title-small-font-family: Poppins;
+  --typography-title-small-font-weight: 400;
+  --typography-title-small-line-height: 21px;
+  --typography-title-small-letter-spacing: -0.1px;
+
+  --typography-body-large-font-size: 18px;
+  --typography-body-large-font-family: Poppins;
+  --typography-body-large-font-weight: 400;
+  --typography-body-large-line-height: 27px;
+  --typography-body-large-letter-spacing: -0.5px;
+
+  --typography-body-medium-font-size: 14px;
+  --typography-body-medium-font-family: Poppins;
+  --typography-body-medium-font-weight: 400;
+  --typography-body-medium-line-height: 21px;
+  --typography-body-medium-letter-spacing: -0.3px;
+
+  --typography-body-small-font-size: 12px;
+  --typography-body-small-font-family: Poppins;
+  --typography-body-small-font-weight: 400;
+  --typography-body-small-line-height: 18px;
+  --typography-body-small-letter-spacing: -0.1px;
+
+  --typography-label-large-font-size: 14px;
+  --typography-label-large-font-family: Poppins;
+  --typography-label-large-font-weight: 400;
+  --typography-label-large-line-height: 21px;
+  --typography-label-large-letter-spacing: -0.5px;
+
+  --typography-label-medium-font-size: 12px;
+  --typography-label-medium-font-family: Poppins;
+  --typography-label-medium-font-weight: 400;
+  --typography-label-medium-line-height: 18px;
+  --typography-label-medium-letter-spacing: -0.3px;
+
+  --typography-label-small-font-size: 11px;
+  --typography-label-small-font-family: Poppins;
+  --typography-label-small-font-weight: 400;
+  --typography-label-small-line-height: 16.5px;
+  --typography-label-small-letter-spacing: -0.1px;
+}

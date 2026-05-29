@@ -1,0 +1,43 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.track {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background: var(--color-surface-container-highest);
+  border: 1px solid var(--color-outline);
+  transition: background 0.2s ease;
+}
+
+.thumb {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  transition: transform 0.2s ease;
+}
+
+.dark {
+  transform: translateX(2px);
+}
+
+.light {
+  transform: translateX(20px);
+}
+
+.label {
+  font-size: 16px;
+  line-height: 1;
+}

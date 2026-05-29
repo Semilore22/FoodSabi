@@ -1,0 +1,49 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Session {
+  id           String    @id @default(cuid())
+  sessionId    String    @unique @map("session_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastActiveAt DateTime  @updatedAt @map("last_active_at")
+  expiresAt    DateTime? @map("expires_at")
+  status       String    @default("active") @map("status")
+  messages     Message[]
+
+  @@map("sessions")
+  @@index([status], name: "idx_sessions_status")
+  @@index([lastActiveAt], name: "idx_sessions_last_active")
+  @@index([expiresAt], name: "idx_sessions_expires")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  sessionId String   @map("session_id")
+  role      String   @map("role")
+  inputType String   @map("input_type")
+  content   String   @map("content")
+  imageUrl  String?  @map("image_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  session   Session  @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@map("messages")
+  @@index([sessionId], name: "idx_messages_session")
+  @@index([createdAt], name: "idx_messages_created")
+}
+
+model IngredientCache {
+  id           String   @id @default(cuid())
+  cacheKey     String   @unique @map("cache_key")
+  responseText String   @map("response_text")
+  hitCount     Int      @default(0) @map("hit_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("ingredient_caches")
+  @@index([cacheKey], name: "idx_cache_key")
+}
