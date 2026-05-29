@@ -15,7 +15,7 @@ export async function GET(req: Request): Promise<Response> {
     const sessions = await prisma.session.findMany({
       where: { sessionId: { in: sessionIds } },
       orderBy: { lastActiveAt: "desc" },
-      take: 20,
+      take: 50,
       include: {
         messages: {
           orderBy: { createdAt: "asc" },

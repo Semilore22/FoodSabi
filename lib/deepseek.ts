@@ -164,9 +164,10 @@ function buildMessages(
   history: { role: string; content: string }[],
   userInput: string
 ): ChatCompletionMessageParam[] {
-  const safeHistory = history.filter((msg) => {
-    if (msg.role !== "user") return true
-    return runGuardrail(msg.content, true).allowed
+  const safeHistory = history.map((msg) => {
+    if (msg.role !== "user") return msg
+    if (runGuardrail(msg.content, true).allowed) return msg
+    return { ...msg, content: "[previous message omitted]" }
   })
   return [
     { role: "system", content: SYSTEM_PROMPT },
@@ -228,12 +229,12 @@ async function callDeepSeek(
          error.name === "AbortError")
 
       if (isServerError || isNetworkError) {
-        if (error instanceof OpenAI.APIError && error.status === 429) {
-          throw new FoodSabiError("rate_limit_exceeded")
-        }
         if (attempt < MAX_RETRIES) {
           await delay(RETRY_DELAY_MS * (attempt + 1))
           continue
+        }
+        if (error instanceof OpenAI.APIError && error.status === 429) {
+          throw new FoodSabiError("rate_limit_exceeded")
         }
       }
 
@@ -247,11 +248,12 @@ async function callDeepSeek(
 async function fetchSessionHistory(sessionId: string): Promise<{ role: string; content: string }[]> {
   const messages = await prisma.message.findMany({
     where: { sessionId },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
     select: { role: true, content: true },
+    take: MAX_HISTORY_LENGTH,
   })
 
-  return messages.slice(-MAX_HISTORY_LENGTH)
+  return messages.reverse()
 }
 
 async function persistConversation(

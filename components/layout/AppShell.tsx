@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import styles from "./AppShell.module.css"
 import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
@@ -80,6 +80,16 @@ export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sessions, setSessions] = useState<SessionListItem[]>([])
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
+  const sessionIdRef = useRef(sessionId)
+  const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    sessionIdRef.current = sessionId
+  }, [sessionId])
+
+  useEffect(() => {
+    return () => abortRef.current?.abort()
+  }, [])
 
   useEffect(() => {
     if (!error) return
@@ -102,6 +112,7 @@ export function AppShell() {
     const stored = sessionStorage.getItem("foodsabi-session-id")
     if (stored) {
       setSessionId(stored)
+      sessionIdRef.current = stored
       restoreMessages(stored)
     } else {
       createNewSession()
@@ -148,14 +159,14 @@ export function AppShell() {
       if (data.messages) {
         const parsed = data.messages.map((msg: Record<string, unknown>) => {
           let response = null
-          let displayContent = msg.content as string
+          let displayContent = (typeof msg.content === "string" ? msg.content : "") || ""
           const imageUrl = (msg.imageUrl as string) || null
           if (msg.role === "user" && msg.inputType === "image") {
             displayContent = imageUrl ? "" : "Uploaded image of food label"
           }
           if (msg.role === "assistant") {
             try {
-              const parsedContent = JSON.parse(msg.content as string)
+              const parsedContent = JSON.parse(displayContent)
               if (parsedContent.ingredients || parsedContent.nutrients) {
                 response = parsedContent
                 displayContent = ""
@@ -195,15 +206,19 @@ export function AppShell() {
   }
 
   const confirmDelete = async () => {
+    abortRef.current?.abort()
+    abortRef.current = new AbortController()
+    const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+
     const sid = pendingDeleteId
     if (!sid) return
     setPendingDeleteId(null)
     try {
-      await fetch(`${API_BASE}/session/${sid}?hard=true`, { method: "DELETE", signal: AbortSignal.timeout(FETCH_TIMEOUT) })
+      await fetch(`${API_BASE}/session/${sid}?hard=true`, { method: "DELETE", signal })
     } catch {
       // best-effort delete
     }
-    if (sid === sessionId) {
+    if (sid === sessionIdRef.current) {
       sessionStorage.removeItem("foodsabi-session-id")
       setMessages([])
       setError(null)
@@ -225,24 +240,34 @@ export function AppShell() {
   }
 
   const handleNewChat = async () => {
-    if (sessionId) {
-      try {
-        await fetch(`${API_BASE}/session/${sessionId}`, { method: "DELETE", signal: AbortSignal.timeout(FETCH_TIMEOUT) })
-      } catch {
-        // cleanup best-effort
-      }
-    }
+    abortRef.current?.abort()
+    abortRef.current = new AbortController()
+    const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+
+    const oldId = sessionIdRef.current
+
     sessionStorage.removeItem("foodsabi-session-id")
     setMessages([])
     setError(null)
     setSelectedFile(null)
+
+    if (oldId) {
+      fetch(`${API_BASE}/session/${oldId}`, { method: "DELETE", signal }).catch(() => {})
+    }
+
     await createNewSession()
   }
 
   const handleSend = async (input: InputPayload) => {
     setError(null)
 
+    if (!sessionIdRef.current) return
+
     if (input.inputType === "image" && input.imageFile) {
+      abortRef.current?.abort()
+      abortRef.current = new AbortController()
+      const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+
       const imageUrl = URL.createObjectURL(input.imageFile)
       setMessages((prev) => [
         ...prev,
@@ -255,14 +280,26 @@ export function AppShell() {
         },
       ])
       setSelectedFile(null)
-      setIsLoading(true)
+      setIsOcrProcessing(true)
 
       try {
         const compressed = await compressImage(input.imageFile)
+        setIsOcrProcessing(false)
+        setIsLoading(true)
+
         const extractedText = await extractTextFromImage(compressed)
 
+        if (!extractedText || extractedText.length < 10 || /^[^a-zA-Z]{10,}$/.test(extractedText)) {
+          setIsLoading(false)
+          setError({
+            errorType: "blurry_image",
+            userMessage: "This picture isn't clear enough for me to read. Try taking it again in better light or just type out the ingredients and I'll explain them for you.",
+          })
+          return
+        }
+
         const formData = new FormData()
-        formData.append("sessionId", sessionId)
+        formData.append("sessionId", sessionIdRef.current)
         formData.append("extractedText", extractedText)
         formData.append("compressedFile", compressed)
         formData.append("mimeType", compressed.type)
@@ -270,7 +307,7 @@ export function AppShell() {
         const uploadRes = await fetch(`${API_BASE}/upload`, {
           method: "POST",
           body: formData,
-          signal: AbortSignal.timeout(FETCH_TIMEOUT),
+          signal,
         })
 
         const uploadData = await uploadRes.json()
@@ -292,8 +329,9 @@ export function AppShell() {
               : msg
           )
         )
-        await sendToAnalyze("image", uploadData.extractedText || extractedText, base64Url)
+        await sendToAnalyze("image", uploadData.extractedText || extractedText, base64Url, signal)
       } catch {
+        setIsOcrProcessing(false)
         setIsLoading(false)
         setError({
           errorType: "blurry_image",
@@ -306,6 +344,10 @@ export function AppShell() {
     }
 
     if (input.content.trim()) {
+      abortRef.current?.abort()
+      abortRef.current = new AbortController()
+      const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+
       setMessages((prev) => [
         ...prev,
         {
@@ -315,11 +357,11 @@ export function AppShell() {
           timestamp: new Date().toISOString(),
         },
       ])
-      await sendToAnalyze(input.inputType, input.content)
+      await sendToAnalyze(input.inputType, input.content, undefined, signal)
     }
   }
 
-  const sendToAnalyze = async (inputType: string, content: string, imageUrl?: string) => {
+  const sendToAnalyze = async (inputType: string, content: string, imageUrl?: string, signal?: AbortSignal) => {
     setIsLoading(true)
     setError(null)
 
@@ -327,8 +369,8 @@ export function AppShell() {
       const res = await fetch(`${API_BASE}/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, inputType, content, imageUrl }),
-        signal: AbortSignal.timeout(FETCH_TIMEOUT),
+        body: JSON.stringify({ sessionId: sessionIdRef.current, inputType, content, imageUrl }),
+        signal: signal || AbortSignal.timeout(FETCH_TIMEOUT),
       })
 
       const data = await res.json()

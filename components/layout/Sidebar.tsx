@@ -40,7 +40,7 @@ export function Sidebar({
             <span className={styles.brand}>FoodSabi</span>
             <button className={styles.closeBtn} onClick={onClose} type="button" aria-label="Close sidebar">☰</button>
           </div>
-          <button className={styles.newChat} onClick={onNewChat} type="button">
+          <button className={styles.newChat} onClick={() => { onNewChat(); onClose() }} type="button">
             <span className={styles.plusIcon}>+</span>
             New Chat
           </button>
