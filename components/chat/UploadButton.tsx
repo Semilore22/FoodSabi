@@ -28,13 +28,16 @@ export function UploadButton({ onFileSelect, disabled, icon = "camera" }: Upload
   }
 
   return (
-    <>
+    <div className={styles.wrapper}>
       <IconButton
         icon={icon}
         onClick={handleClick}
         ariaLabel="Upload food label image"
         disabled={disabled}
       />
+      <div className={styles.tooltip} role="tooltip">
+        Take a clear photo — well-lit and in focus
+      </div>
       <input
         ref={inputRef}
         type="file"
@@ -42,6 +45,6 @@ export function UploadButton({ onFileSelect, disabled, icon = "camera" }: Upload
         className={styles.hiddenInput}
         onChange={handleChange}
       />
-    </>
+    </div>
   )
 }

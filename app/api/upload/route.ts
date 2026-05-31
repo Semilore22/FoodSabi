@@ -98,12 +98,18 @@ async function callOcrSpace(
 }
 
 async function extractTextViaOcrSpace(buffer: ArrayBuffer, fileName: string): Promise<string> {
-  const processed = await preprocessImage(buffer)
+  const rawBuffer = Buffer.from(buffer)
 
-  let text = await callOcrSpace(processed, 1, fileName)
+  let text = await callOcrSpace(rawBuffer, 1, fileName)
+
   if (!text) {
-    text = await callOcrSpace(processed, 2, fileName)
+    const processed = await preprocessImage(buffer)
+    text = await callOcrSpace(processed, 1, fileName)
+    if (!text) {
+      text = await callOcrSpace(processed, 2, fileName)
+    }
   }
+
   if (!text) {
     throw new FoodSabiError("blurry_image")
   }

@@ -64,6 +64,7 @@ export interface NutrientDetail {
   name: string
   value: string
   level: Level
+  level_reasoning: string
   plain_explanation: string
 }
 
