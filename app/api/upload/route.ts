@@ -54,7 +54,7 @@ export async function POST(req: Request): Promise<Response> {
       throw new FoodSabiError("unsupported_file")
     }
 
-    const extractedText = await extractTextFromImage(Buffer.from(buffer), file.name)
+    const extractedText = await extractTextFromImage(Buffer.from(buffer))
 
     if (extractedText.length > OCR_MAX_LENGTH) {
       throw new FoodSabiError("blurry_image")
