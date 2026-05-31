@@ -11,6 +11,7 @@ import { SuggestionPills } from "@/components/chat/SuggestionPills"
 import { ConfirmModal } from "@/components/ui/ConfirmModal"
 import { generateUUID } from "@/lib/utils"
 import { compressImage } from "@/lib/compress"
+import { createTimeoutSignal } from "@/lib/signal"
 import { SUPPORTED_MIME_TYPES } from "@/lib/constants"
 const FETCH_TIMEOUT = 15000
 const UPLOAD_FETCH_TIMEOUT = 60000
@@ -194,7 +195,7 @@ export function AppShell() {
   const confirmDelete = async () => {
     abortRef.current?.abort()
     abortRef.current = new AbortController()
-    const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+    const signal = createTimeoutSignal(abortRef.current, FETCH_TIMEOUT)
 
     const sid = pendingDeleteId
     if (!sid) return
@@ -228,7 +229,7 @@ export function AppShell() {
   const handleNewChat = async () => {
     abortRef.current?.abort()
     abortRef.current = new AbortController()
-    const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+    const signal = createTimeoutSignal(abortRef.current, FETCH_TIMEOUT)
 
     const oldId = sessionIdRef.current
 
@@ -267,12 +268,14 @@ export function AppShell() {
       setSelectedFile(null)
       setIsOcrProcessing(true)
 
+      let compressedBlobUrl: string | null = null
+
       try {
         const compressed = await compressImage(input.imageFile)
         setIsOcrProcessing(false)
         setIsLoading(true)
 
-        const uploadSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(UPLOAD_FETCH_TIMEOUT)])
+        const uploadSignal = createTimeoutSignal(abortRef.current, UPLOAD_FETCH_TIMEOUT)
 
         const formData = new FormData()
         formData.append("sessionId", sessionIdRef.current)
@@ -284,18 +287,28 @@ export function AppShell() {
           signal: uploadSignal,
         })
 
-        const uploadData = await uploadRes.json()
-
-        if (!uploadRes.ok || !uploadData.success) {
+        let uploadData: Record<string, unknown>
+        try {
+          uploadData = await uploadRes.json()
+        } catch {
           setIsLoading(false)
           setError({
-            errorType: uploadData.error_type || "blurry_image",
-            userMessage: uploadData.user_message || "This picture isn't clear enough for me to read. Try taking it again in better light or just type out the ingredients and I'll explain them for you.",
+            errorType: "network_failure",
+            userMessage: "Something went wrong on our end. Check your connection and try again.",
           })
           return
         }
 
-        const compressedBlobUrl = URL.createObjectURL(compressed)
+        if (!uploadRes.ok || !uploadData.success) {
+          setIsLoading(false)
+          setError({
+            errorType: (uploadData.error_type as ErrorType) || "blurry_image",
+            userMessage: (uploadData.user_message as string) || "This picture isn't clear enough for me to read. Try taking it again in better light or just type out the ingredients and I'll explain them for you.",
+          })
+          return
+        }
+
+        compressedBlobUrl = URL.createObjectURL(compressed)
         setMessages((prev) =>
           prev.map((msg) =>
             msg.inputType === "image" && msg.imageUrl === imageUrl
@@ -303,12 +316,12 @@ export function AppShell() {
               : msg
           )
         )
-        const analyzeSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
-        await sendToAnalyze("image", uploadData.extractedText, compressedBlobUrl, analyzeSignal)
-      } catch (error) {
+        const analyzeSignal = createTimeoutSignal(abortRef.current, FETCH_TIMEOUT)
+        await sendToAnalyze("image", uploadData.extractedText as string, compressedBlobUrl, analyzeSignal)
+      } catch (error: unknown) {
         setIsOcrProcessing(false)
         setIsLoading(false)
-        if (error instanceof DOMException && error.name === "AbortError") {
+        if (error instanceof Error && error.name === "AbortError") {
           return
         }
         setError({
@@ -316,7 +329,10 @@ export function AppShell() {
           userMessage: "Something went wrong on our end. Check your connection and try again.",
         })
       } finally {
-        URL.revokeObjectURL(imageUrl)
+        try { URL.revokeObjectURL(imageUrl) } catch { /* ignore */ }
+        if (compressedBlobUrl) {
+          try { URL.revokeObjectURL(compressedBlobUrl) } catch { /* ignore */ }
+        }
       }
       return
     }
@@ -324,7 +340,7 @@ export function AppShell() {
     if (input.content.trim()) {
       abortRef.current?.abort()
       abortRef.current = new AbortController()
-      const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+      const signal = createTimeoutSignal(abortRef.current, FETCH_TIMEOUT)
 
       setMessages((prev) => [
         ...prev,

@@ -32,13 +32,14 @@ function detectMime(buffer: Buffer): string {
 }
 
 async function callOcrSpace(
-  dataUri: string,
+  b64: string,
+  mime: string,
   apiKey: string,
   engine: number
 ): Promise<string | null> {
-  const body = new URLSearchParams()
+  const body = new FormData()
   body.append("apikey", apiKey)
-  body.append("base64Image", dataUri)
+  body.append("base64Image", `data:${mime};base64,${b64}`)
   body.append("language", "eng")
   body.append("OCREngine", String(engine))
   body.append("scale", "true")
@@ -49,26 +50,34 @@ async function callOcrSpace(
   try {
     response = await fetch(OCR_SPACE_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body,
       signal: AbortSignal.timeout(TIMEOUT_MS),
     })
   } catch {
-    throw new FoodSabiError("network_failure")
+    return null
+  }
+
+  if (response.status === 429) {
+    throw new FoodSabiError("rate_limit_exceeded")
   }
 
   if (!response.ok) {
-    throw new FoodSabiError("network_failure")
+    return null
   }
 
   let data: Record<string, unknown>
   try {
     data = await response.json()
   } catch {
-    throw new FoodSabiError("network_failure")
+    return null
   }
 
   if (data.IsErroredOnProcessing || (data.OCRExitCode != null && Number(data.OCRExitCode) > 1)) {
+    const isAuthError =
+      data.OCRExitCode != null && Number(data.OCRExitCode) === 99
+    if (isAuthError) {
+      throw new FoodSabiError("network_failure")
+    }
     return null
   }
 
@@ -82,32 +91,36 @@ async function callOcrSpace(
     return null
   }
 
-  const text = (result.ParsedText as string || "").trim()
-  return text || null
+  const text = (result.ParsedText as string) || ""
+  const trimmed = text.trim()
+  return trimmed || null
 }
 
 export async function extractTextFromImage(
   imageBuffer: Buffer
 ): Promise<string> {
-  const apiKey = process.env.OCR_SPACE_API_KEY
+  const rawKey = process.env.OCR_SPACE_API_KEY
+  const apiKey = rawKey ? rawKey.trim() : ""
+
   if (!apiKey) {
     throw new FoodSabiError("network_failure")
   }
 
   const mime = detectMime(imageBuffer)
   const b64 = imageBuffer.toString("base64")
-  const dataUri = `data:${mime};base64,${b64}`
 
   const engines = [2, 1]
 
   for (const engine of engines) {
     try {
-      const text = await callOcrSpace(dataUri, apiKey, engine)
+      const text = await callOcrSpace(b64, mime, apiKey, engine)
       if (text && text.length >= MIN_TEXT_LENGTH) {
         return text
       }
-    } catch {
-      continue
+    } catch (error) {
+      if (error instanceof FoodSabiError) {
+        throw error
+      }
     }
   }
 

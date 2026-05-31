@@ -25,12 +25,24 @@ function isValidWebp(buffer: ArrayBuffer): boolean {
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    const formData = await req.formData()
+    let formData: FormData
+    try {
+      formData = await req.formData()
+    } catch {
+      throw new FoodSabiError("unsupported_file")
+    }
+
     const sessionId = formData.get("sessionId") as string | null
     const file = formData.get("file") as File | null
 
     validateSessionId(sessionId)
-    await checkRateLimit(sessionId!, "image")
+
+    try {
+      await checkRateLimit(sessionId!, "image")
+    } catch (error) {
+      if (error instanceof FoodSabiError) throw error
+      throw new FoodSabiError("network_failure")
+    }
 
     if (!file || file.size === 0) {
       throw new FoodSabiError("unsupported_file")
@@ -44,7 +56,16 @@ export async function POST(req: Request): Promise<Response> {
       throw new FoodSabiError("image_too_large")
     }
 
-    const buffer = await file.arrayBuffer()
+    let buffer: ArrayBuffer
+    try {
+      buffer = await file.arrayBuffer()
+    } catch {
+      throw new FoodSabiError("unsupported_file")
+    }
+
+    if (buffer.byteLength < 4) {
+      throw new FoodSabiError("unsupported_file")
+    }
 
     const isJpeg = hasMagicBytes(buffer, JPEG_MAGIC)
     const isPng = hasMagicBytes(buffer, PNG_MAGIC)
