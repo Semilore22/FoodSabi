@@ -13,6 +13,7 @@ import { generateUUID } from "@/lib/utils"
 import { compressImage } from "@/lib/compress"
 import { SUPPORTED_MIME_TYPES } from "@/lib/constants"
 const FETCH_TIMEOUT = 15000
+const UPLOAD_FETCH_TIMEOUT = 60000
 
 function getOwnedSessionIds(): string[] {
   try {
@@ -271,12 +272,11 @@ export function AppShell() {
         setIsOcrProcessing(false)
         setIsLoading(true)
 
-        const uploadSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+        const uploadSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(UPLOAD_FETCH_TIMEOUT)])
 
         const formData = new FormData()
         formData.append("sessionId", sessionIdRef.current)
         formData.append("file", compressed, compressed.name || "image.jpg")
-        formData.append("mimeType", compressed.type)
 
         const uploadRes = await fetch(`${API_BASE}/upload`, {
           method: "POST",

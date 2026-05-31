@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@prisma/client": "^6",
-    "browser-image-compression": "^2",
     "next": "16.2.6",
     "openai": "^4",
     "react": "19.2.4",
