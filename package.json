@@ -10,13 +10,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "next": "16.2.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "openai": "^4",
     "@prisma/client": "^6",
-    "tesseract.js": "^5",
-    "browser-image-compression": "^2"
+    "browser-image-compression": "^2",
+    "next": "16.2.6",
+    "openai": "^4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -24,7 +23,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
-    "typescript": "^5",
-    "prisma": "^6"
+    "prisma": "^6",
+    "typescript": "^5"
   }
 }

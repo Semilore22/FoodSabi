@@ -1,3 +1,4 @@
+
 import imageCompression from "browser-image-compression"
 import { MAX_IMAGE_SIZE_KB } from "@/lib/constants"
 

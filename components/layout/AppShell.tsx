@@ -11,7 +11,6 @@ import { SuggestionPills } from "@/components/chat/SuggestionPills"
 import { ConfirmModal } from "@/components/ui/ConfirmModal"
 import { generateUUID } from "@/lib/utils"
 import { compressImage } from "@/lib/compress"
-import { extractTextFromImage } from "@/lib/ocr"
 const FETCH_TIMEOUT = 15000
 
 function getOwnedSessionIds(): string[] {
@@ -287,21 +286,9 @@ export function AppShell() {
         setIsOcrProcessing(false)
         setIsLoading(true)
 
-        const extractedText = await extractTextFromImage(compressed)
-
-        if (!extractedText || extractedText.length < 10 || /^[^a-zA-Z]{10,}$/.test(extractedText)) {
-          setIsLoading(false)
-          setError({
-            errorType: "blurry_image",
-            userMessage: "This picture isn't clear enough for me to read. Try taking it again in better light or just type out the ingredients and I'll explain them for you.",
-          })
-          return
-        }
-
         const formData = new FormData()
         formData.append("sessionId", sessionIdRef.current)
-        formData.append("extractedText", extractedText)
-        formData.append("compressedFile", compressed)
+        formData.append("file", compressed, compressed.name)
         formData.append("mimeType", compressed.type)
 
         const uploadRes = await fetch(`${API_BASE}/upload`, {
@@ -316,7 +303,7 @@ export function AppShell() {
           setIsLoading(false)
           setError({
             errorType: uploadData.error_type || "blurry_image",
-            userMessage: uploadData.user_message || "This picture isn't clear enough for me to read.",
+            userMessage: uploadData.user_message || "This picture isn't clear enough for me to read. Try taking it again in better light or just type out the ingredients and I'll explain them for you.",
           })
           return
         }
@@ -329,7 +316,7 @@ export function AppShell() {
               : msg
           )
         )
-        await sendToAnalyze("image", uploadData.extractedText || extractedText, base64Url, signal)
+        await sendToAnalyze("image", uploadData.extractedText, base64Url, signal)
       } catch {
         setIsOcrProcessing(false)
         setIsLoading(false)
