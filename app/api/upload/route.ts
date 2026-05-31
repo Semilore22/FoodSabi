@@ -1,4 +1,3 @@
-import sharp from "sharp"
 import { validateSessionId } from "@/lib/validators"
 import { runGuardrail } from "@/lib/guardrail"
 import { mapToErrorResponse, FoodSabiError } from "@/lib/errors"
@@ -22,15 +21,6 @@ function checkMagicBytes(buffer: ArrayBuffer, magic: Uint8Array): boolean {
   if (buffer.byteLength < magic.length) return false
   const view = new Uint8Array(buffer, 0, magic.length)
   return magic.every((byte, i) => view[i] === byte)
-}
-
-async function preprocessImage(buffer: ArrayBuffer): Promise<Buffer> {
-  return sharp(Buffer.from(buffer))
-    .grayscale()
-    .normalise()
-    .sharpen()
-    .jpeg()
-    .toBuffer()
 }
 
 async function callOcrSpace(
@@ -103,11 +93,7 @@ async function extractTextViaOcrSpace(buffer: ArrayBuffer, fileName: string): Pr
   let text = await callOcrSpace(rawBuffer, 1, fileName)
 
   if (!text) {
-    const processed = await preprocessImage(buffer)
-    text = await callOcrSpace(processed, 1, fileName)
-    if (!text) {
-      text = await callOcrSpace(processed, 2, fileName)
-    }
+    text = await callOcrSpace(rawBuffer, 2, fileName)
   }
 
   if (!text) {

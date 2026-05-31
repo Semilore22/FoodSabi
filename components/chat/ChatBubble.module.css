@@ -168,6 +168,14 @@
   color: var(--color-on-primary-container);
 }
 
+.levelReasoning {
+  font-size: var(--typography-body-small-font-size);
+  color: var(--color-on-surface-variant);
+  line-height: 1.5;
+  padding: 2px 0 6px;
+  margin-top: -2px;
+}
+
 .summarySection,
 .storageSection {
   margin-top: 12px;

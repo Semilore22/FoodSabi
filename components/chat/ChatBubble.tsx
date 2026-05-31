@@ -1,5 +1,6 @@
 "use client"
 
+import { Fragment } from "react"
 import styles from "./ChatBubble.module.css"
 import type { AnalyzeResponse } from "@/types"
 
@@ -81,19 +82,26 @@ export function ChatBubble({
             )}
             <div className={styles.nutrientsGrid}>
               {response.nutrients.map((nutrient, idx) => (
-                <div key={idx} className={styles.nutrientRow}>
-                  <span className={styles.nutrientName}>{nutrient.name ?? ""}</span>
-                  <span className={styles.nutrientValue}>
-                    {nutrient.value ?? "—"}
-                  </span>
-                  <span
-                    className={`${styles.levelBadge} ${
-                      styles[`level_${nutrient.level}`] || ""
-                    }`}
-                  >
-                    {nutrient.level ?? "—"}
-                  </span>
-                </div>
+                <Fragment key={idx}>
+                  <div className={styles.nutrientRow}>
+                    <span className={styles.nutrientName}>{nutrient.name ?? ""}</span>
+                    <span className={styles.nutrientValue}>
+                      {nutrient.value ?? "—"}
+                    </span>
+                    <span
+                      className={`${styles.levelBadge} ${
+                        styles[`level_${nutrient.level}`] || ""
+                      }`}
+                    >
+                      {nutrient.level ?? "—"}
+                    </span>
+                  </div>
+                  {nutrient.level_reasoning && (
+                    <div className={styles.levelReasoning}>
+                      {nutrient.level_reasoning}
+                    </div>
+                  )}
+                </Fragment>
               ))}
             </div>
             {response.overall_summary && (

@@ -91,6 +91,10 @@ export function ChatInput({
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clickTipRef = useRef(false)
 
+  const isTouchDevice = useRef(
+    typeof window !== "undefined" && matchMedia("(hover: none)").matches
+  )
+
   const openFilePicker = useCallback(() => {
     const input = fileInputRef.current
     if (!input) return
@@ -103,21 +107,25 @@ export function ChatInput({
 
   const handleUploadPress = useCallback(() => {
     if (isLoading || isOcrProcessing) return
-    if (clickTipRef.current) {
-      clickTipRef.current = false
-      setShowClickTip(false)
+    if (isTouchDevice.current) {
+      if (clickTipRef.current) {
+        clickTipRef.current = false
+        setShowClickTip(false)
+        if (clickTimer.current) clearTimeout(clickTimer.current)
+        openFilePicker()
+        return
+      }
       if (clickTimer.current) clearTimeout(clickTimer.current)
+      clickTipRef.current = true
+      setShowClickTip(true)
+      clickTimer.current = setTimeout(() => {
+        clickTipRef.current = false
+        setShowClickTip(false)
+        openFilePicker()
+      }, 2000)
+    } else {
       openFilePicker()
-      return
     }
-    if (clickTimer.current) clearTimeout(clickTimer.current)
-    clickTipRef.current = true
-    setShowClickTip(true)
-    clickTimer.current = setTimeout(() => {
-      clickTipRef.current = false
-      setShowClickTip(false)
-      openFilePicker()
-    }, 2000)
   }, [isLoading, isOcrProcessing, openFilePicker])
 
   const handleUploadHoverEnter = () => {
