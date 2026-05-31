@@ -3,7 +3,7 @@
 import { useRef } from "react"
 import styles from "./UploadButton.module.css"
 import { IconButton } from "@/components/ui/IconButton"
-import { SUPPORTED_IMAGE_FORMATS } from "@/lib/constants"
+import { SUPPORTED_MIME_TYPES } from "@/lib/constants"
 
 interface UploadButtonProps {
   onFileSelect: (file: File) => void
@@ -38,7 +38,7 @@ export function UploadButton({ onFileSelect, disabled, icon = "camera" }: Upload
       <input
         ref={inputRef}
         type="file"
-        accept={SUPPORTED_IMAGE_FORMATS.map((f) => `image/${f}`).join(",")}
+        accept={SUPPORTED_MIME_TYPES.join(",")}
         className={styles.hiddenInput}
         onChange={handleChange}
       />

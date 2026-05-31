@@ -30,21 +30,6 @@ function addOwnedSessionId(id: string): void {
   }
 }
 
-function fileToBase64(file: File | Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result !== "string" || !reader.result) {
-        reject(new Error("file_read_failed"))
-        return
-      }
-      resolve(reader.result)
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
-
 import type {
   AnalyzeResponse,
   ErrorType,
@@ -265,7 +250,6 @@ export function AppShell() {
     if (input.inputType === "image" && input.imageFile) {
       abortRef.current?.abort()
       abortRef.current = new AbortController()
-      const signal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
 
       const imageUrl = URL.createObjectURL(input.imageFile)
       setMessages((prev) => [
@@ -286,15 +270,17 @@ export function AppShell() {
         setIsOcrProcessing(false)
         setIsLoading(true)
 
+        const uploadSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+
         const formData = new FormData()
         formData.append("sessionId", sessionIdRef.current)
-        formData.append("file", compressed, compressed.name)
+        formData.append("file", compressed, compressed.name || "image.jpg")
         formData.append("mimeType", compressed.type)
 
         const uploadRes = await fetch(`${API_BASE}/upload`, {
           method: "POST",
           body: formData,
-          signal,
+          signal: uploadSignal,
         })
 
         const uploadData = await uploadRes.json()
@@ -308,15 +294,16 @@ export function AppShell() {
           return
         }
 
-        const base64Url = await fileToBase64(compressed)
+        const compressedBlobUrl = URL.createObjectURL(compressed)
         setMessages((prev) =>
           prev.map((msg) =>
             msg.inputType === "image" && msg.imageUrl === imageUrl
-              ? { ...msg, imageUrl: base64Url }
+              ? { ...msg, imageUrl: compressedBlobUrl }
               : msg
           )
         )
-        await sendToAnalyze("image", uploadData.extractedText, base64Url, signal)
+        const analyzeSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
+        await sendToAnalyze("image", uploadData.extractedText, compressedBlobUrl, analyzeSignal)
       } catch {
         setIsOcrProcessing(false)
         setIsLoading(false)

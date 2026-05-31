@@ -1,3 +1,4 @@
+import sharp from "sharp"
 import { validateSessionId } from "@/lib/validators"
 import { runGuardrail } from "@/lib/guardrail"
 import { mapToErrorResponse, FoodSabiError } from "@/lib/errors"
@@ -5,7 +6,6 @@ import { checkRateLimit } from "@/lib/rate-limit"
 import {
   SUPPORTED_MIME_TYPES,
   MAX_IMAGE_SIZE_KB,
-  OCR_MIN_LENGTH,
   OCR_MAX_LENGTH,
 } from "@/lib/constants"
 import type { UploadResponse } from "@/types"
@@ -16,6 +16,7 @@ const WEBP_MAGIC = Uint8Array.of(0x52, 0x49, 0x46, 0x46)
 const WEBP_SIGNATURE = "WEBP"
 const OCR_SPACE_URL = "https://api.ocr.space/parse/image"
 const OCR_SPACE_TIMEOUT_MS = 30000
+const OCR_FALLBACK_MIN_LENGTH = 20
 
 function checkMagicBytes(buffer: ArrayBuffer, magic: Uint8Array): boolean {
   if (buffer.byteLength < magic.length) return false
@@ -23,7 +24,20 @@ function checkMagicBytes(buffer: ArrayBuffer, magic: Uint8Array): boolean {
   return magic.every((byte, i) => view[i] === byte)
 }
 
-async function extractTextViaOcrSpace(file: File): Promise<string> {
+async function preprocessImage(buffer: ArrayBuffer): Promise<Buffer> {
+  return sharp(Buffer.from(buffer))
+    .grayscale()
+    .normalise()
+    .sharpen()
+    .jpeg()
+    .toBuffer()
+}
+
+async function callOcrSpace(
+  imageBuffer: Buffer,
+  engine: number,
+  fileName: string
+): Promise<string | null> {
   const apiKey = process.env.OCR_SPACE_API_KEY
   if (!apiKey) {
     throw new FoodSabiError("network_failure")
@@ -31,10 +45,10 @@ async function extractTextViaOcrSpace(file: File): Promise<string> {
 
   const body = new FormData()
   body.append("apikey", apiKey)
-  body.append("file", file, file.name || "image.jpg")
+  body.append("file", new Blob([new Uint8Array(imageBuffer)]), fileName || "image.jpg")
   body.append("language", "eng")
   body.append("isOverlayRequired", "false")
-  body.append("OCREngine", "2")
+  body.append("OCREngine", String(engine))
 
   let ocrRes: Response
   try {
@@ -62,25 +76,39 @@ async function extractTextViaOcrSpace(file: File): Promise<string> {
   }
 
   if (data.IsErroredOnProcessing === true || (data.OCRExitCode != null && Number(data.OCRExitCode) > 1)) {
-    throw new FoodSabiError("blurry_image")
+    return null
   }
 
   const parsedResults = data.ParsedResults as Array<{ ParsedText?: string; FileParseExitCode?: unknown }> | undefined
   if (!parsedResults || parsedResults.length === 0) {
-    throw new FoodSabiError("blurry_image")
+    return null
   }
 
   const firstResult = parsedResults[0]
   if (firstResult.FileParseExitCode != null && Number(firstResult.FileParseExitCode) > 1) {
+    return null
+  }
+
+  const text = (firstResult.ParsedText ?? "").trim()
+  if (text.length < OCR_FALLBACK_MIN_LENGTH) {
+    return null
+  }
+
+  return text
+}
+
+async function extractTextViaOcrSpace(buffer: ArrayBuffer, fileName: string): Promise<string> {
+  const processed = await preprocessImage(buffer)
+
+  let text = await callOcrSpace(processed, 1, fileName)
+  if (!text) {
+    text = await callOcrSpace(processed, 2, fileName)
+  }
+  if (!text) {
     throw new FoodSabiError("blurry_image")
   }
 
-  const text = firstResult.ParsedText ?? ""
-  if (text.trim().length < OCR_MIN_LENGTH) {
-    throw new FoodSabiError("blurry_image")
-  }
-
-  return text.trim()
+  return text
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -119,7 +147,7 @@ export async function POST(req: Request): Promise<Response> {
       throw new FoodSabiError("unsupported_file")
     }
 
-    const extractedText = await extractTextViaOcrSpace(file)
+    const extractedText = await extractTextViaOcrSpace(buffer, file.name)
 
     if (extractedText.length > OCR_MAX_LENGTH) {
       throw new FoodSabiError("blurry_image")
