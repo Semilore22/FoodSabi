@@ -11,6 +11,46 @@
   margin: 0 auto;
 }
 
+.inputWrapperGroup {
+  position: relative;
+  flex: 1;
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.uploadTip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  translate: -50% 0;
+  width: max-content;
+  max-width: 260px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--color-inverse-surface);
+  color: var(--color-inverse-on-surface);
+  font-family: var(--font-family-base);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% 12px;
+  transition: opacity 0.4s ease, translate 0.4s ease;
+  z-index: 20;
+}
+
+.uploadTipVisible {
+  opacity: 1;
+  translate: -50% 0;
+}
+
 .inputWrapper {
   position: relative;
   flex: 1;
