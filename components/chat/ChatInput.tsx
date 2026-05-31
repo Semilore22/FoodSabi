@@ -89,16 +89,36 @@ export function ChatInput({
   const showTip = showHoverTip || showClickTip
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const clickTipRef = useRef(false)
+
+  const openFilePicker = useCallback(() => {
+    const input = fileInputRef.current
+    if (!input) return
+    if (typeof input.showPicker === "function") {
+      input.showPicker()
+    } else {
+      input.click()
+    }
+  }, [])
 
   const handleUploadPress = useCallback(() => {
     if (isLoading || isOcrProcessing) return
+    if (clickTipRef.current) {
+      clickTipRef.current = false
+      setShowClickTip(false)
+      if (clickTimer.current) clearTimeout(clickTimer.current)
+      openFilePicker()
+      return
+    }
     if (clickTimer.current) clearTimeout(clickTimer.current)
+    clickTipRef.current = true
     setShowClickTip(true)
     clickTimer.current = setTimeout(() => {
+      clickTipRef.current = false
       setShowClickTip(false)
-      fileInputRef.current?.click()
+      openFilePicker()
     }, 2000)
-  }, [isLoading, isOcrProcessing])
+  }, [isLoading, isOcrProcessing, openFilePicker])
 
   const handleUploadHoverEnter = () => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current)
