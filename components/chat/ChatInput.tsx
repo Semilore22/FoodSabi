@@ -41,7 +41,7 @@ export function ChatInput({
       setPreviewUrl(null)
       return
     }
-    if (!SUPPORTED_MIME_TYPES.includes(selectedFile.type)) {
+    if (selectedFile.type && !SUPPORTED_MIME_TYPES.includes(selectedFile.type) && selectedFile.type !== "image/heic" && selectedFile.type !== "image/heif") {
       setPreviewUrl(null)
       return
     }
@@ -89,11 +89,6 @@ export function ChatInput({
   const showTip = showHoverTip || showClickTip
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const clickTipRef = useRef(false)
-
-  const isTouchDevice = useRef(
-    typeof window !== "undefined" && matchMedia("(hover: none)").matches
-  )
 
   const openFilePicker = useCallback(() => {
     const input = fileInputRef.current
@@ -107,25 +102,10 @@ export function ChatInput({
 
   const handleUploadPress = useCallback(() => {
     if (isLoading || isOcrProcessing) return
-    if (isTouchDevice.current) {
-      if (clickTipRef.current) {
-        clickTipRef.current = false
-        setShowClickTip(false)
-        if (clickTimer.current) clearTimeout(clickTimer.current)
-        openFilePicker()
-        return
-      }
-      if (clickTimer.current) clearTimeout(clickTimer.current)
-      clickTipRef.current = true
-      setShowClickTip(true)
-      clickTimer.current = setTimeout(() => {
-        clickTipRef.current = false
-        setShowClickTip(false)
-        openFilePicker()
-      }, 2000)
-    } else {
-      openFilePicker()
-    }
+    setShowClickTip(true)
+    if (clickTimer.current) clearTimeout(clickTimer.current)
+    clickTimer.current = setTimeout(() => setShowClickTip(false), 2000)
+    openFilePicker()
   }, [isLoading, isOcrProcessing, openFilePicker])
 
   const handleUploadHoverEnter = () => {
@@ -245,7 +225,7 @@ export function ChatInput({
       <input
         ref={fileInputRef}
         type="file"
-        accept={SUPPORTED_MIME_TYPES.join(",")}
+        accept={[...SUPPORTED_MIME_TYPES, "image/heic", "image/heif"].join(",")}
         className={styles.hiddenInput}
         onChange={handleFileChange}
       />

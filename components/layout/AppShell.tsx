@@ -11,6 +11,7 @@ import { SuggestionPills } from "@/components/chat/SuggestionPills"
 import { ConfirmModal } from "@/components/ui/ConfirmModal"
 import { generateUUID } from "@/lib/utils"
 import { compressImage } from "@/lib/compress"
+import { SUPPORTED_MIME_TYPES } from "@/lib/constants"
 const FETCH_TIMEOUT = 15000
 
 function getOwnedSessionIds(): string[] {
@@ -304,12 +305,15 @@ export function AppShell() {
         )
         const analyzeSignal = AbortSignal.any([abortRef.current.signal, AbortSignal.timeout(FETCH_TIMEOUT)])
         await sendToAnalyze("image", uploadData.extractedText, compressedBlobUrl, analyzeSignal)
-      } catch {
+      } catch (error) {
         setIsOcrProcessing(false)
         setIsLoading(false)
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return
+        }
         setError({
-          errorType: "blurry_image",
-          userMessage: "This picture isn't clear enough for me to read. Try taking it again in better light or just type out the ingredients and I'll explain them for you.",
+          errorType: "network_failure",
+          userMessage: "Something went wrong on our end. Check your connection and try again.",
         })
       } finally {
         URL.revokeObjectURL(imageUrl)
@@ -391,8 +395,11 @@ export function AppShell() {
       }
 
       fetchSessions()
-    } catch {
+    } catch (error) {
       setIsLoading(false)
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return
+      }
       setError({
         errorType: "network_failure",
         userMessage: "Something went wrong on our end. Check your connection and try again.",
@@ -403,6 +410,17 @@ export function AppShell() {
   const handleRetry = () => {
     setError(null)
   }
+
+  const handleFileSelect = useCallback((file: File) => {
+    if (file.type && !SUPPORTED_MIME_TYPES.includes(file.type) && file.type !== "image/heic" && file.type !== "image/heif") {
+      setError({
+        errorType: "unsupported_file",
+        userMessage: "I can only read image files. Try uploading a JPG or PNG of your food label.",
+      })
+      return
+    }
+    setSelectedFile(file)
+  }, [])
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev)
 
@@ -431,9 +449,7 @@ export function AppShell() {
                   isLoading={isLoading}
                   isOcrProcessing={isOcrProcessing}
                   selectedFile={selectedFile}
-                  onFileSelect={(file) => {
-                    setSelectedFile(file)
-                  }}
+                  onFileSelect={handleFileSelect}
                   onFileRemove={() => setSelectedFile(null)}
                 />
                 <SuggestionPills
@@ -456,9 +472,7 @@ export function AppShell() {
                 isLoading={isLoading}
                 isOcrProcessing={isOcrProcessing}
                 selectedFile={selectedFile}
-                 onFileSelect={(file) => {
-                    setSelectedFile(file)
-                  }}
+                onFileSelect={handleFileSelect}
                 onFileRemove={() => setSelectedFile(null)}
               />
             </>
