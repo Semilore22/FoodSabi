@@ -23,7 +23,7 @@ export function validateAnalyzeRequest(body: unknown): void {
     if (typeof imageUrl !== "string") {
       throw new FoodSabiError("empty_input")
     }
-    if (!imageUrl.startsWith("data:image/") && !imageUrl.startsWith("https://")) {
+    if (!imageUrl.startsWith("data:image/") && !imageUrl.startsWith("https://") && !imageUrl.startsWith("blob:")) {
       throw new FoodSabiError("empty_input")
     }
   }
