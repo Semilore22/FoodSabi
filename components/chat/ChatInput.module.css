@@ -27,28 +27,27 @@
 .uploadTip {
   position: absolute;
   bottom: calc(100% + 4px);
-  left: 50%;
-  translate: -50% 0;
+  left: 0;
   width: max-content;
   max-width: 260px;
   padding: 10px 16px;
   border-radius: 10px;
-  background: var(--color-inverse-surface);
-  color: var(--color-inverse-on-surface);
+  background: var(--color-surface-container-high);
+  color: var(--color-on-surface);
   font-family: var(--font-family-base);
   font-size: 13px;
   line-height: 1.5;
-  text-align: center;
+  text-align: left;
   pointer-events: none;
   opacity: 0;
-  translate: -50% 12px;
+  translate: 0 12px;
   transition: opacity 0.4s ease, translate 0.4s ease;
   z-index: 20;
 }
 
 .uploadTipVisible {
   opacity: 1;
-  translate: -50% 0;
+  translate: 0 0;
 }
 
 .inputWrapper {

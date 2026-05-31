@@ -33,7 +33,6 @@ export function ChatInput({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [showHoverTip, setShowHoverTip] = useState(false)
   const [showClickTip, setShowClickTip] = useState(false)
-  const uploadTipTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -60,7 +59,8 @@ export function ChatInput({
 
   useEffect(() => {
     return () => {
-      if (uploadTipTimer.current) clearTimeout(uploadTipTimer.current)
+      if (hoverTimer.current) clearTimeout(hoverTimer.current)
+      if (clickTimer.current) clearTimeout(clickTimer.current)
     }
   }, [])
 
@@ -87,19 +87,24 @@ export function ChatInput({
   }
 
   const showTip = showHoverTip || showClickTip
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleUploadPress = useCallback(() => {
     if (isLoading || isOcrProcessing) return
+    if (clickTimer.current) clearTimeout(clickTimer.current)
     setShowClickTip(true)
-    if (uploadTipTimer.current) clearTimeout(uploadTipTimer.current)
-    uploadTipTimer.current = setTimeout(() => {
+    clickTimer.current = setTimeout(() => {
       setShowClickTip(false)
       fileInputRef.current?.click()
-    }, 2500)
+    }, 2000)
   }, [isLoading, isOcrProcessing])
 
-  const handleUploadHoverEnter = () => setShowHoverTip(true)
-  const handleUploadHoverLeave = () => setShowHoverTip(false)
+  const handleUploadHoverEnter = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    setShowHoverTip(true)
+    hoverTimer.current = setTimeout(() => setShowHoverTip(false), 2000)
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -178,7 +183,6 @@ export function ChatInput({
               <>
                 <div className={styles.leftActions}
                   onMouseEnter={handleUploadHoverEnter}
-                  onMouseLeave={handleUploadHoverLeave}
                 >
                   <UploadButton onPress={handleUploadPress} disabled={isLoading || isOcrProcessing} icon="plus" />
                 </div>
