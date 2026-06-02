@@ -316,8 +316,12 @@ export function AppShell() {
               : msg
           )
         )
+        const extractedText = (uploadData.extractedText as string) || ""
+        const analyzeContent = input.content
+          ? `${input.content}\n\n${extractedText}`
+          : extractedText
         const analyzeSignal = createTimeoutSignal(abortRef.current, FETCH_TIMEOUT)
-        await sendToAnalyze("image", uploadData.extractedText as string, compressedBlobUrl, analyzeSignal)
+        await sendToAnalyze("image", analyzeContent, compressedBlobUrl, analyzeSignal)
       } catch (error: unknown) {
         setIsOcrProcessing(false)
         setIsLoading(false)
