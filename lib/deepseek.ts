@@ -318,9 +318,11 @@ function isSingleIngredientQuery(input: string): boolean {
 
 async function analyzeWithCache(
   sessionId: string,
-  input: string
+  input: string,
+  inputType?: string
 ): Promise<AnalyzeResponse> {
-  const isSingle = isSingleIngredientQuery(input)
+  const fromImage = inputType === "image"
+  const isSingle = !fromImage && isSingleIngredientQuery(input)
   const cacheKey = input.trim().toLowerCase()
 
   if (isSingle) {
@@ -340,7 +342,7 @@ async function analyzeWithCache(
   const history = await fetchSessionHistory(sessionId)
   const result = await callDeepSeek(history, input)
 
-  if (isSingle && "ingredients" in result && result.type === "single_ingredient") {
+  if (!fromImage && isSingle && "ingredients" in result && result.type === "single_ingredient") {
     try {
       await setCache(cacheKey, JSON.stringify(result))
     } catch {

@@ -28,7 +28,7 @@ export async function POST(req: Request): Promise<Response> {
       throw new FoodSabiError("out_of_scope")
     }
 
-    const result = await analyzeWithCache(body.sessionId, body.content)
+    const result = await analyzeWithCache(body.sessionId, body.content, body.inputType)
 
     await persistConversation(
       body.sessionId,
