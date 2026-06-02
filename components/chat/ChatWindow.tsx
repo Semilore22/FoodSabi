@@ -34,9 +34,22 @@ export function ChatWindow({
   onRetry,
 }: ChatWindowProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (!scrollAreaRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+      return
+    }
+
+    const assistantEls = scrollAreaRef.current.querySelectorAll('[data-msg-role="assistant"]')
+    const lastAssistant = assistantEls[assistantEls.length - 1]
+
+    if (lastAssistant) {
+      lastAssistant.scrollIntoView({ behavior: "smooth", block: "start" })
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
   }, [messages, isLoading])
 
   if (messages.length === 0 && !error) {
@@ -59,16 +72,17 @@ export function ChatWindow({
           onRetry={onRetry}
         />
       )}
-      <div className={styles.scrollArea}>
+      <div className={styles.scrollArea} ref={scrollAreaRef}>
         {messages.map((msg, idx) => (
-          <ChatBubble
-            key={idx}
-            role={msg.role}
-            content={msg.content}
-            imageUrl={msg.imageUrl}
-            response={msg.response}
-            timestamp={msg.timestamp}
-          />
+          <div key={idx} data-msg-role={msg.role}>
+            <ChatBubble
+              role={msg.role}
+              content={msg.content}
+              imageUrl={msg.imageUrl}
+              response={msg.response}
+              timestamp={msg.timestamp}
+            />
+          </div>
         ))}
 
         {isLoading && <TypingIndicator />}
