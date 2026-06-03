@@ -397,6 +397,22 @@ const FOOD_KEYWORDS = [
   /potassium/i,
   /calcium/i,
   /magnesium/i,
+  /serving/i,
+  /per.?serving/i,
+  /daily.?value/i,
+  /energy/i,
+  /kcal/i,
+  /kjoule/i,
+  /manufactured/i,
+  /distributed/i,
+  /imported/i,
+  /exported/i,
+  /packed/i,
+  /net.?weight/i,
+  /best.?before/i,
+  /expir/i,
+  /batch/i,
+  /lot.?no/i,
 ]
 
 export function sanitizeInput(input: string): string {

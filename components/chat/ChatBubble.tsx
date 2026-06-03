@@ -31,7 +31,7 @@ export function ChatBubble({
             <img src={imageUrl} alt="Food label" className={styles.image} />
           </div>
         )}
-        {!imageUrl && inputType === "image" && (
+        {isUser && !imageUrl && inputType === "image" && (
           <div className={styles.imagePlaceholder}>
             <span>📷 Food label image</span>
           </div>

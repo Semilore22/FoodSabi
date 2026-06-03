@@ -69,13 +69,18 @@ export function AppShell() {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const sessionIdRef = useRef(sessionId)
   const abortRef = useRef<AbortController | null>(null)
+  const blobUrlsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     sessionIdRef.current = sessionId
   }, [sessionId])
 
   useEffect(() => {
-    return () => abortRef.current?.abort()
+    return () => {
+      abortRef.current?.abort()
+      blobUrlsRef.current.forEach(url => URL.revokeObjectURL(url))
+      blobUrlsRef.current.clear()
+    }
   }, [])
 
   useEffect(() => {
@@ -234,6 +239,8 @@ export function AppShell() {
     const oldId = sessionIdRef.current
 
     sessionStorage.removeItem("foodsabi-session-id")
+    blobUrlsRef.current.forEach(url => URL.revokeObjectURL(url))
+    blobUrlsRef.current.clear()
     setMessages([])
     setError(null)
     setSelectedFile(null)
@@ -255,6 +262,7 @@ export function AppShell() {
       abortRef.current = new AbortController()
 
       const imageUrl = URL.createObjectURL(input.imageFile)
+      blobUrlsRef.current.add(imageUrl)
       setMessages((prev) => [
         ...prev,
         {
@@ -315,13 +323,6 @@ export function AppShell() {
           : `Extracted label text: ${extractedText}`
         const analyzeSignal = createTimeoutSignal(abortRef.current, UPLOAD_FETCH_TIMEOUT)
         await sendToAnalyze("image", analyzeContent, compressedBlobUrl, analyzeSignal)
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.inputType === "image" && msg.imageUrl === imageUrl
-              ? { ...msg, imageUrl: null }
-              : msg
-          )
-        )
       } catch (error: unknown) {
         setIsOcrProcessing(false)
         setIsLoading(false)
@@ -333,7 +334,6 @@ export function AppShell() {
           userMessage: "Something went wrong on our end. Check your connection and try again.",
         })
       } finally {
-        try { URL.revokeObjectURL(imageUrl) } catch { /* ignore */ }
         if (compressedBlobUrl) {
           try { URL.revokeObjectURL(compressedBlobUrl) } catch { /* ignore */ }
         }
@@ -359,7 +359,7 @@ export function AppShell() {
     }
   }
 
-  const sendToAnalyze = async (inputType: string, content: string, imageUrl?: string, signal?: AbortSignal) => {
+  const sendToAnalyze = async (inputType: string, content: string, imageUrl?: string, signal?: AbortSignal): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
 
@@ -379,7 +379,7 @@ export function AppShell() {
           errorType: data.error_type || "network_failure",
           userMessage: data.user_message || "Something went wrong on our end. Check your connection and try again.",
         })
-        return
+        return false
       }
 
       setIsLoading(false)
@@ -415,15 +415,17 @@ export function AppShell() {
       }
 
       fetchSessions()
+      return true
     } catch (error) {
       setIsLoading(false)
       if (error instanceof DOMException && error.name === "AbortError") {
-        return
+        return false
       }
       setError({
         errorType: "network_failure",
         userMessage: "Something went wrong on our end. Check your connection and try again.",
       })
+      return false
     }
   }
 

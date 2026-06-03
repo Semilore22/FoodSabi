@@ -1,7 +1,7 @@
 import { FoodSabiError } from "@/lib/errors"
 import { isValidUUID } from "@/lib/utils"
 
-const MAX_CONTENT_LENGTH = 10000
+const MAX_CONTENT_LENGTH = 11000
 
 export function validateAnalyzeRequest(body: unknown): void {
   if (!body || typeof body !== "object") throw new FoodSabiError("empty_input")
