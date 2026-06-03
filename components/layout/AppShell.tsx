@@ -149,7 +149,7 @@ export function AppShell() {
           let displayContent = (typeof msg.content === "string" ? msg.content : "") || ""
           const imageUrl = (msg.imageUrl as string) || null
           if (msg.role === "user" && msg.inputType === "image") {
-            displayContent = imageUrl ? "" : "Uploaded image of food label"
+            displayContent = imageUrl ? "" : "📷 Food label image"
           }
           if (msg.role === "assistant") {
             try {
@@ -169,7 +169,7 @@ export function AppShell() {
             role,
             content: displayContent,
             inputType: msg.inputType as string,
-            imageUrl,
+            imageUrl: null,
             response,
             timestamp: msg.timestamp as string,
           }
@@ -309,19 +309,19 @@ export function AppShell() {
         }
 
         compressedBlobUrl = URL.createObjectURL(compressed)
+        const extractedText = (uploadData.extractedText as string) || ""
+        const analyzeContent = input.content
+          ? `User note: ${input.content}\nExtracted label text: ${extractedText}`
+          : `Extracted label text: ${extractedText}`
+        const analyzeSignal = createTimeoutSignal(abortRef.current, UPLOAD_FETCH_TIMEOUT)
+        await sendToAnalyze("image", analyzeContent, compressedBlobUrl, analyzeSignal)
         setMessages((prev) =>
           prev.map((msg) =>
             msg.inputType === "image" && msg.imageUrl === imageUrl
-              ? { ...msg, imageUrl: compressedBlobUrl }
+              ? { ...msg, imageUrl: null }
               : msg
           )
         )
-        const extractedText = (uploadData.extractedText as string) || ""
-        const analyzeContent = input.content
-          ? `${input.content}\n\n${extractedText}`
-          : extractedText
-        const analyzeSignal = createTimeoutSignal(abortRef.current, FETCH_TIMEOUT)
-        await sendToAnalyze("image", analyzeContent, compressedBlobUrl, analyzeSignal)
       } catch (error: unknown) {
         setIsOcrProcessing(false)
         setIsLoading(false)

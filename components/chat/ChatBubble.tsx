@@ -8,6 +8,7 @@ interface ChatBubbleProps {
   role: "user" | "assistant"
   content: string
   imageUrl?: string | null
+  inputType?: string
   response?: AnalyzeResponse | null
   timestamp?: string
 }
@@ -16,6 +17,7 @@ export function ChatBubble({
   role,
   content,
   imageUrl,
+  inputType,
   response,
   timestamp,
 }: ChatBubbleProps) {
@@ -27,6 +29,11 @@ export function ChatBubble({
         {imageUrl && (
           <div className={styles.imageWrapper}>
             <img src={imageUrl} alt="Food label" className={styles.image} />
+          </div>
+        )}
+        {!imageUrl && inputType === "image" && (
+          <div className={styles.imagePlaceholder}>
+            <span>📷 Food label image</span>
           </div>
         )}
 

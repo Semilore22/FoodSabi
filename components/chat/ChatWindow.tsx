@@ -37,13 +37,8 @@ export function ChatWindow({
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!scrollAreaRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-      return
-    }
-
-    const assistantEls = scrollAreaRef.current.querySelectorAll('[data-msg-role="assistant"]')
-    const lastAssistant = assistantEls[assistantEls.length - 1]
+    const assistantEls = scrollAreaRef.current?.querySelectorAll('[data-msg-role="assistant"]')
+    const lastAssistant = assistantEls?.[assistantEls.length - 1]
 
     if (lastAssistant) {
       lastAssistant.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -79,6 +74,7 @@ export function ChatWindow({
               role={msg.role}
               content={msg.content}
               imageUrl={msg.imageUrl}
+              inputType={msg.inputType}
               response={msg.response}
               timestamp={msg.timestamp}
             />

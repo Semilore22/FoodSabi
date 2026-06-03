@@ -257,7 +257,7 @@ async function callDeepSeek(
 async function fetchSessionHistory(sessionId: string): Promise<{ role: string; content: string }[]> {
   const messages = await prisma.message.findMany({
     where: { sessionId },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { id: "asc" }],
     select: { role: true, content: true },
     take: MAX_HISTORY_LENGTH,
   })
@@ -272,22 +272,22 @@ async function persistConversation(
   assistantResponse: string,
   imageUrl?: string
 ): Promise<void> {
-  await prisma.message.createMany({
-    data: [
-      {
-        sessionId,
-        role: "user",
-        inputType,
-        content: userInput,
-        imageUrl: imageUrl || null,
-      },
-      {
-        sessionId,
-        role: "assistant",
-        inputType,
-        content: assistantResponse,
-      },
-    ],
+  await prisma.message.create({
+    data: {
+      sessionId,
+      role: "user",
+      inputType,
+      content: userInput,
+      imageUrl: imageUrl || null,
+    },
+  })
+  await prisma.message.create({
+    data: {
+      sessionId,
+      role: "assistant",
+      inputType,
+      content: assistantResponse,
+    },
   })
 }
 

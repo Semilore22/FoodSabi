@@ -50,6 +50,16 @@
   border-radius: 8px;
 }
 
+.imagePlaceholder {
+  padding: 12px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: var(--typography-body-medium-font-size);
+  color: var(--color-on-surface-variant);
+}
+
 .timestamp {
   font-size: var(--typography-label-small-font-size);
   color: var(--color-on-surface-variant);
