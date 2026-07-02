@@ -1,5 +1,5 @@
-import { AppShell } from "@/components/layout/AppShell"
+import { AppWithOnboarding } from "@/components/onboarding/AppWithOnboarding"
 
 export default function Home() {
-  return <AppShell />
+  return <AppWithOnboarding />
 }
