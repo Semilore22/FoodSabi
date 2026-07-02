@@ -14,6 +14,29 @@ const OUT_OF_SCOPE_PATTERNS = [
   /underlying technology/i,
 ]
 
+const UNRELATED_TOPICS = [
+  /weather/i,
+  /forecast/i,
+  /coding/i,
+  /programming/i,
+  /sport/i,
+  /football/i,
+  /basketball/i,
+  /soccer/i,
+  /music/i,
+  /movie/i,
+  /film/i,
+]
+
+const FOOD_BRANDS = [
+  /indomie/i, /gala/i, /chi exotic/i, /lacasera/i, /bigi/i,
+  /pepsi/i, /sprite/i, /coca cola/i, /coke/i, /fanta/i,
+  /milo/i, /bournvita/i, /ovaltine/i, /peak milk/i, /hollandia/i,
+  /nasco/i, /digestive/i, /cabin/i, /digestives/i, /ribena/i,
+  /lucozade/i, /maltina/i, /hi malt/i, /amstel/i, /trophy/i,
+  /golden morn/i, /cornflakes/i, /quaker/i, /nutri/i,
+]
+
 const FOOD_KEYWORDS = [
   /ingredient/i,
   /label/i,
@@ -413,22 +436,41 @@ const FOOD_KEYWORDS = [
   /expir/i,
   /batch/i,
   /lot.?no/i,
+  /meal/i,
+  /product/i,
+  /pack/i,
+  /bottle/i,
+  /can/i,
+  /sachet/i,
+  /tin/i,
+  /safe/i,
+  /healthy/i,
+  /bad/i,
+  /good/i,
+  /harmful/i,
 ]
 
 export function sanitizeInput(input: string): string {
   return input.replace(/[<>]/g, "").replace(/[{}`$]/g, "").trim()
 }
 
-export function runGuardrail(input: string, isFollowUp = false): GuardrailResult {
+export function runGuardrail(input: string, hasSessionHistory = false): GuardrailResult {
   const cleanInput = sanitizeInput(input)
 
   const isInjection = OUT_OF_SCOPE_PATTERNS.some((p) => p.test(cleanInput))
   if (isInjection) return { allowed: false }
 
-  if (!isFollowUp) {
-    const isFoodRelated = FOOD_KEYWORDS.some((p) => p.test(cleanInput))
-    if (!isFoodRelated) return { allowed: false }
+  if (hasSessionHistory) {
+    const isUnrelated = UNRELATED_TOPICS.some((p) => p.test(cleanInput))
+    if (isUnrelated) return { allowed: false }
+    return { allowed: true }
   }
+
+  const isBrand = FOOD_BRANDS.some((p) => p.test(cleanInput))
+  if (isBrand) return { allowed: true }
+
+  const isFoodRelated = FOOD_KEYWORDS.some((p) => p.test(cleanInput))
+  if (!isFoodRelated) return { allowed: false }
 
   return { allowed: true }
 }

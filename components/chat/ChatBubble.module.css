@@ -186,6 +186,21 @@
   margin-top: -2px;
 }
 
+.disclaimer {
+  font-size: var(--typography-label-small-font-size);
+  color: var(--color-on-surface-variant);
+  margin-top: 8px;
+  padding: 0 4px;
+  line-height: 1.4;
+}
+
+.introSummary {
+  margin-bottom: 12px;
+  padding: 8px 0;
+  font-size: var(--typography-body-medium-font-size);
+  line-height: 1.6;
+}
+
 .summarySection,
 .storageSection {
   margin-top: 12px;

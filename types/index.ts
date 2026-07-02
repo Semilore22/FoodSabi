@@ -53,6 +53,7 @@ export interface IngredientResponse {
   type: "single_ingredient" | "full_list"
   product_name: string | null
   serving_size: string | null
+  intro_summary?: string
   ingredients: IngredientDetail[]
   overall_summary: string
   storage_guidance: string

@@ -44,6 +44,11 @@ export function ChatBubble({
             {response.product_name && (
               <h3 className={styles.productName}>{response.product_name}</h3>
             )}
+            {"intro_summary" in response && response.intro_summary && (
+              <div className={styles.introSummary}>
+                <p>{response.intro_summary}</p>
+              </div>
+            )}
             {response.ingredients.map((ingredient, idx) => (
               <div key={idx} className={styles.ingredientCard}>
                 <div className={styles.cardHeader}>
@@ -129,7 +134,11 @@ export function ChatBubble({
           <p className={styles.content}>Here's what I found. Ask me more about any ingredient.</p>
         )}
       </div>
-      {timestamp && <span className={styles.timestamp}>{timestamp}</span>}
+      {!isUser && (content || response) && (
+        <p className={styles.disclaimer}>
+          This information is based on food science knowledge and is for informational purposes only.
+        </p>
+      )}
     </div>
   )
 }
