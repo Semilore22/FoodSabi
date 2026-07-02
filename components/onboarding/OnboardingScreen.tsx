@@ -1,5 +1,6 @@
 "use client"
 
+import { OnboardingBackground } from "./OnboardingBackground"
 import styles from "./OnboardingScreen.module.css"
 
 interface OnboardingScreenProps {
@@ -18,6 +19,7 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 
   return (
     <div className={styles.onboarding}>
+      <OnboardingBackground />
       <div className={styles.topSection}>
         <div className={styles.mockChat}>
           <div className={styles.userBubble}>
